@@ -32,16 +32,15 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-
 # ─────────────────────────────────────────────
 #  KONFIGURASI GLOBAL
 # ─────────────────────────────────────────────
 WINDOW_W, WINDOW_H = 1024, 768
-TITLE    = "Festival Lampion Borobudur - Visualisasi 3D"
-FPS      = 60
+TITLE = "Festival Lampion Borobudur - Visualisasi 3D"
+FPS = 60
 
-MAX_PARTICLES  = 150
-SPAWN_RATE     = 2
+MAX_PARTICLES = 150
+SPAWN_RATE = 2
 PARTICLE_MIN_Y = -8.0
 PARTICLE_MAX_Y = 28.0
 
@@ -65,29 +64,31 @@ class LampionParticle:
 
     def reset(self):
         spread = 13.0
-        self.x  = random.uniform(-spread, spread)
-        self.y  = PARTICLE_MIN_Y + random.uniform(-2, 2)
-        self.z  = random.uniform(-spread, spread)
+        self.x = random.uniform(-spread, spread)
+        self.y = PARTICLE_MIN_Y + random.uniform(-2, 2)
+        self.z = random.uniform(-spread, spread)
 
         self.vy = random.uniform(0.04, 0.10)
         self.vx = random.uniform(-0.008, 0.008)
         self.vz = random.uniform(-0.008, 0.008)
 
-        self.osc_amp   = random.uniform(0.002, 0.007)
+        self.osc_amp = random.uniform(0.002, 0.007)
         self.osc_speed = random.uniform(1.0, 3.0)
         self.osc_phase = random.uniform(0, 2 * math.pi)
 
         self.color = random.choice(self.COLOR_PALETTE)
-        self.size  = random.uniform(0.20, 0.50)
+        self.size = random.uniform(0.20, 0.50)
 
-        self.age  = 0
+        self.age = 0
         self.life = random.uniform(180, 380)
         self.alpha = 0.0
 
     def update(self, time):
         self.age += 1
         self.y += self.vy
-        self.x += self.vx + math.sin(time * self.osc_speed + self.osc_phase) * self.osc_amp
+        self.x += (
+            self.vx + math.sin(time * self.osc_speed + self.osc_phase) * self.osc_amp
+        )
         self.z += self.vz
 
         fade = 30
@@ -107,9 +108,9 @@ class LampionParticle:
 # ─────────────────────────────────────────────
 class ParticleSystem:
     def __init__(self, max_p=MAX_PARTICLES):
-        self.max_p     = max_p
+        self.max_p = max_p
         self.particles = []
-        self.time      = 0.0
+        self.time = 0.0
 
     def update(self):
         self.time += 0.016
@@ -160,11 +161,24 @@ class ParticleSystem:
 # ─────────────────────────────────────────────
 def draw_box():
     v = [
-        [-0.5,-0.5,-0.5],[0.5,-0.5,-0.5],[0.5,0.5,-0.5],[-0.5,0.5,-0.5],
-        [-0.5,-0.5, 0.5],[0.5,-0.5, 0.5],[0.5,0.5, 0.5],[-0.5,0.5, 0.5],
+        [-0.5, -0.5, -0.5],
+        [0.5, -0.5, -0.5],
+        [0.5, 0.5, -0.5],
+        [-0.5, 0.5, -0.5],
+        [-0.5, -0.5, 0.5],
+        [0.5, -0.5, 0.5],
+        [0.5, 0.5, 0.5],
+        [-0.5, 0.5, 0.5],
     ]
-    faces   = [[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[0,3,7,4],[1,2,6,5]]
-    normals = [[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[-1,0,0],[1,0,0]]
+    faces = [
+        [0, 1, 2, 3],
+        [4, 5, 6, 7],
+        [0, 1, 5, 4],
+        [2, 3, 7, 6],
+        [0, 3, 7, 4],
+        [1, 2, 6, 5],
+    ]
+    normals = [[0, 0, -1], [0, 0, 1], [0, -1, 0], [0, 1, 0], [-1, 0, 0], [1, 0, 0]]
     glBegin(GL_QUADS)
     for fi, face in enumerate(faces):
         glNormal3fv(normals[fi])
@@ -189,26 +203,33 @@ def draw_borobudur(q):
     glPopMatrix()
 
     # 6 teras persegi
-    tiers = [(15,1,15),(13,1,13),(11,1,11),(9.5,1,9.5),(8,1,8),(6.5,1,6.5)]
+    tiers = [
+        (15, 1, 15),
+        (13, 1, 13),
+        (11, 1, 11),
+        (9.5, 1, 9.5),
+        (8, 1, 8),
+        (6.5, 1, 6.5),
+    ]
     yo = 0.5
     for i, (sx, sy, sz) in enumerate(tiers):
-        t  = i / len(tiers)
+        t = i / len(tiers)
         rc = SC[0] + t * 0.06
         gc = SC[1] + t * 0.05
         bc = SC[2] + t * 0.04
         glColor3f(rc, gc, bc)
         glPushMatrix()
-        glTranslatef(0, yo + sy/2, 0)
+        glTranslatef(0, yo + sy / 2, 0)
         glScalef(sx, sy, sz)
         draw_box()
         glPopMatrix()
 
         # Ornamen sudut
         glColor3f(*SA)
-        for dx in [-sx/2+0.4, sx/2-0.4]:
-            for dz in [-sz/2+0.4, sz/2-0.4]:
+        for dx in [-sx / 2 + 0.4, sx / 2 - 0.4]:
+            for dz in [-sz / 2 + 0.4, sz / 2 - 0.4]:
                 glPushMatrix()
-                glTranslatef(dx, yo+sy, dz)
+                glTranslatef(dx, yo + sy, dz)
                 gluCylinder(q, 0.15, 0.10, 0.35, 6, 2)
                 glPopMatrix()
         yo += sy
@@ -238,7 +259,7 @@ def draw_borobudur(q):
             sx_ = sr * math.cos(ang)
             sz_ = sr * math.sin(ang)
             glPushMatrix()
-            glTranslatef(sx_, yo+h, sz_)
+            glTranslatef(sx_, yo + h, sz_)
             gluCylinder(q, 0.20, 0.20, 0.30, 8, 2)
             glTranslatef(0, 0.30, 0)
             gluSphere(q, 0.26, 8, 6)
@@ -276,9 +297,9 @@ def draw_ground():
     glColor3f(0.08, 0.14, 0.06)
     glBegin(GL_QUADS)
     glVertex3f(-80, -0.02, -80)
-    glVertex3f( 80, -0.02, -80)
-    glVertex3f( 80, -0.02,  80)
-    glVertex3f(-80, -0.02,  80)
+    glVertex3f(80, -0.02, -80)
+    glVertex3f(80, -0.02, 80)
+    glVertex3f(-80, -0.02, 80)
     glEnd()
 
 
@@ -305,12 +326,12 @@ def setup_lighting():
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.07, 0.06, 0.11, 1.0])
 
     glLightfv(GL_LIGHT0, GL_POSITION, [0.0, 18.0, 0.0, 1.0])
-    glLightfv(GL_LIGHT0, GL_DIFFUSE,  [0.9, 0.6, 0.2, 1.0])
-    glLightf (GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.02)
-    glLightf (GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001)
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.9, 0.6, 0.2, 1.0])
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.02)
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001)
 
     glLightfv(GL_LIGHT1, GL_POSITION, [-20.0, 30.0, -10.0, 1.0])
-    glLightfv(GL_LIGHT1, GL_DIFFUSE,  [0.30, 0.35, 0.50, 1.0])
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.30, 0.35, 0.50, 1.0])
 
 
 # ─────────────────────────────────────────────
@@ -321,8 +342,8 @@ class Camera:
         self.reset()
 
     def reset(self):
-        self.dist  = 38.0
-        self.yaw   = 30.0
+        self.dist = 38.0
+        self.yaw = 30.0
         self.pitch = 22.0
         self.tx, self.ty, self.tz = 0.0, 5.0, 0.0
 
@@ -336,7 +357,7 @@ class Camera:
         gluLookAt(ex, ey, ez, self.tx, self.ty, self.tz, 0, 1, 0)
 
     def rotate(self, dy, dp):
-        self.yaw  += dy
+        self.yaw += dy
         self.pitch = max(-80, min(80, self.pitch + dp))
 
     def zoom(self, d):
@@ -390,9 +411,17 @@ def draw_hud_quad(hud_surf):
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 WINDOW_W, WINDOW_H, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, tex_data)
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        WINDOW_W,
+        WINDOW_H,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        tex_data,
+    )
 
     # Switch ke proyeksi ortho 2D
     glMatrixMode(GL_PROJECTION)
@@ -410,10 +439,14 @@ def draw_hud_quad(hud_surf):
     glColor4f(1, 1, 1, 1)
 
     glBegin(GL_QUADS)
-    glTexCoord2f(0, 0); glVertex2f(0,        0)
-    glTexCoord2f(1, 0); glVertex2f(WINDOW_W, 0)
-    glTexCoord2f(1, 1); glVertex2f(WINDOW_W, WINDOW_H)
-    glTexCoord2f(0, 1); glVertex2f(0,        WINDOW_H)
+    glTexCoord2f(0, 0)
+    glVertex2f(0, 0)
+    glTexCoord2f(1, 0)
+    glVertex2f(WINDOW_W, 0)
+    glTexCoord2f(1, 1)
+    glVertex2f(WINDOW_W, WINDOW_H)
+    glTexCoord2f(0, 1)
+    glVertex2f(0, WINDOW_H)
     glEnd()
 
     glDisable(GL_TEXTURE_2D)
@@ -435,13 +468,10 @@ def draw_hud_quad(hud_surf):
 def main():
     pygame.init()
 
-    pygame.display.gl_set_attribute(GL_DEPTH_SIZE, 24)
-    pygame.display.gl_set_attribute(GL_DOUBLEBUFFER, 1)
+    pygame.display.gl_set_attribute(pygame.GL_DEPTH_SIZE, 24)
+    pygame.display.gl_set_attribute(pygame.GL_DOUBLEBUFFER, 1)
 
-    screen = pygame.display.set_mode(
-        (WINDOW_W, WINDOW_H),
-        DOUBLEBUF | OPENGL
-    )
+    screen = pygame.display.set_mode((WINDOW_W, WINDOW_H), DOUBLEBUF | OPENGL)
     pygame.display.set_caption(TITLE)
 
     # Font
@@ -469,28 +499,30 @@ def main():
 
     # ── Scene objects ─────────────────────────
     camera = Camera()
-    ps     = ParticleSystem(MAX_PARTICLES)
+    ps = ParticleSystem(MAX_PARTICLES)
 
     stars = []
     for _ in range(600):
-        th = random.uniform(0, 2*math.pi)
-        ph = random.uniform(0.05, math.pi/2)
-        r  = 85.0
-        b  = random.uniform(0.4, 1.0)
-        stars.append((
-            r*math.sin(ph)*math.cos(th),
-            r*math.cos(ph),
-            r*math.sin(ph)*math.sin(th),
-            b
-        ))
+        th = random.uniform(0, 2 * math.pi)
+        ph = random.uniform(0.05, math.pi / 2)
+        r = 85.0
+        b = random.uniform(0.4, 1.0)
+        stars.append(
+            (
+                r * math.sin(ph) * math.cos(th),
+                r * math.cos(ph),
+                r * math.sin(ph) * math.sin(th),
+                b,
+            )
+        )
 
     # Surface HUD (reused setiap frame)
     hud_surf = pygame.Surface((WINDOW_W, WINDOW_H), pygame.SRCALPHA)
 
-    paused     = False
+    paused = False
     mouse_down = False
-    last_mx    = last_my = 0
-    clock      = pygame.time.Clock()
+    last_mx = last_my = 0
+    clock = pygame.time.Clock()
 
     print("=" * 50)
     print("  Festival Lampion Borobudur — OpenGL")
@@ -529,10 +561,7 @@ def main():
                 if ev.button == 1:
                     mouse_down = False
             elif ev.type == MOUSEMOTION and mouse_down:
-                camera.rotate(
-                    (ev.pos[0] - last_mx) * 0.4,
-                    -(ev.pos[1] - last_my) * 0.4
-                )
+                camera.rotate((ev.pos[0] - last_mx) * 0.4, -(ev.pos[1] - last_my) * 0.4)
                 last_mx, last_my = ev.pos
 
         # ── Update ────────────────────────────
@@ -552,7 +581,7 @@ def main():
         glEnable(GL_LIGHTING)
         draw_borobudur(quadric)
 
-        ps.render(quadric)      # lampion (sudah disable lighting di dalam)
+        ps.render(quadric)  # lampion (sudah disable lighting di dalam)
 
         # ── Render HUD sebagai texture quad ───
         render_hud_texture(hud_surf, font_sm, font_lg, ps, paused, fps)
