@@ -237,6 +237,25 @@ class Camera:
     def zoom(self, d):
         self.dist = max(6, min(90, self.dist - d * 2.5))
 
+    def move(self, dx, dy, dz):
+        self.tx += dx
+        self.ty += dy
+        self.tz += dz
+
+    def move_relative(self, forward=0, right=0, up=0):
+
+        yr = math.radians(self.yaw)
+
+        fx = math.sin(yr)
+        fz = math.cos(yr)
+
+        rx = math.cos(yr)
+        rz = -math.sin(yr)
+
+        self.tx += fx * forward + rx * right
+        self.tz += fz * forward + rz * right
+        self.ty += up
+
 
 # ─────────────────────────────────────────────
 #  HUD — render teks sebagai texture quad
@@ -437,6 +456,28 @@ def main():
             elif ev.type == MOUSEMOTION and mouse_down:
                 camera.rotate((ev.pos[0] - last_mx) * 0.4, -(ev.pos[1] - last_my) * 0.4)
                 last_mx, last_my = ev.pos
+
+        keys = pygame.key.get_pressed()
+
+        speed = 0.4
+
+        if keys[K_w]:
+            camera.move_relative(forward=-speed)
+
+        if keys[K_s]:
+            camera.move_relative(forward=speed)
+
+        if keys[K_a]:
+            camera.move_relative(right=-speed)
+
+        if keys[K_d]:
+            camera.move_relative(right=speed)
+
+        if keys[K_q]:
+            camera.move_relative(up=-speed)
+
+        if keys[K_e]:
+            camera.move_relative(up=speed)
 
         # ── Update ────────────────────────────
         if not paused:

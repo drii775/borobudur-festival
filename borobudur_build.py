@@ -337,26 +337,26 @@ def draw_borobudur(quadric):
     # # PUNCAK
     # # =========================
 
-    # cone_h = 2.0
-    # cone_radius = 0.6
+    cone_h = 1.5
+    cone_radius = 0.4
 
-    # glColor3f(0.85, 0.78, 0.62)
+    glColor3f(0.85, 0.78, 0.62)
 
-    # glPushMatrix()
+    glPushMatrix()
 
-    # glTranslatef(0, current_top, 0)
+    glTranslatef(0, current_top, 0)
 
-    # glRotatef(-90, 1, 0, 0)
+    glRotatef(-90, 1, 0, 0)
 
-    # gluCylinder(
-    #     quadric,
-    #     cone_radius,
-    #     0.25,
-    #     cone_h,
-    #     32,
-    #     4,
-    # )
+    gluCylinder(
+        quadric,
+        cone_radius,
+        0.25,
+        cone_h,
+        32,
+        4,
+    )
 
-    # glPopMatrix()
+    glPopMatrix()
 
     glPopMatrix()
