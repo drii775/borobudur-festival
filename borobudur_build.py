@@ -39,45 +39,159 @@ def draw_borobudur(quadric):
 
     glPushMatrix()
 
+    glScalef(2.5, 2.5, 2.5)
+
     # Platform dasar
-    glColor3f(*SD)
+    # glColor3f(*SD)
+    # glPushMatrix()
+    # glTranslatef(0, 0.25, 0)
+    # glScalef(22, 0.5, 22)
+    # draw_box()
+    # glPopMatrix()
+
+    # =========================
+    # BOROBUDUR BASE
+    # =========================
+
+    STONE = (0.55, 0.52, 0.48)
+    STONE_DARK = (0.38, 0.35, 0.30)
+
+    # kaki
+    foot_h = 0.4
+
+    glColor3f(*STONE_DARK)
+
     glPushMatrix()
-    glTranslatef(0, 0.25, 0)
-    glScalef(22, 0.5, 22)
+    glTranslatef(0, foot_h / 2, 0)
+    glScalef(30, foot_h, 30)
     draw_box()
     glPopMatrix()
 
-    # 6 teras persegi
-    tiers = [
-        (15, 1, 15),
-        (13, 1, 13),
-        (11, 1, 11),
-        (9.5, 1, 9.5),
-        (8, 1, 8),
-        (6.5, 1, 6.5),
-    ]
-    yo = 0.5
-    for i, (sx, sy, sz) in enumerate(tiers):
-        t = i / len(tiers)
-        rc = SC[0] + t * 0.06
-        gc = SC[1] + t * 0.05
-        bc = SC[2] + t * 0.04
-        glColor3f(rc, gc, bc)
+    current_top = foot_h
+
+    # # 6 teras persegi
+    # tiers = [
+    #     (15, 1, 15),
+    #     (13, 1, 13),
+    #     (11, 1, 11),
+    #     (9.5, 1, 9.5),
+    #     (8, 1, 8),
+    #     (6.5, 1, 6.5),
+    # ]
+    # yo = 0.5
+    # for i, (sx, sy, sz) in enumerate(tiers):
+    #     t = i / len(tiers)
+    #     rc = SC[0] + t * 0.06
+    #     gc = SC[1] + t * 0.05
+    #     bc = SC[2] + t * 0.04
+    #     glColor3f(rc, gc, bc)
+    #     glPushMatrix()
+    #     glTranslatef(0, yo + sy / 2, 0)
+    #     glScalef(sx, sy, sz)
+    #     draw_box()
+    #     glPopMatrix()
+
+    # =========================
+    # 5 tingkat persegi
+    # =========================
+
+    base_size = 18
+    shrink = 1.6
+    cube_h = 1.2
+
+    for i in range(5):
+
+        size = base_size - (i * shrink)
+
+        current_y = current_top + cube_h / 2
+
+        t = i / 5.0
+
+        glColor3f(
+            STONE[0] + t * 0.08,
+            STONE[1] + t * 0.07,
+            STONE[2] + t * 0.06,
+        )
+
         glPushMatrix()
-        glTranslatef(0, yo + sy / 2, 0)
-        glScalef(sx, sy, sz)
+
+        glTranslatef(0, current_y, 0)
+        glScalef(size, cube_h, size)
+
         draw_box()
+
         glPopMatrix()
 
-        # Ornamen sudut
-        glColor3f(*SA)
-        for dx in [-sx / 2 + 0.4, sx / 2 - 0.4]:
-            for dz in [-sz / 2 + 0.4, sz / 2 - 0.4]:
-                glPushMatrix()
-                glTranslatef(dx, yo + sy, dz)
-                gluCylinder(quadric, 0.15, 0.10, 0.35, 6, 2)
-                glPopMatrix()
-        yo += sy
+        current_top += cube_h
+
+    # =========================
+    # 3 tingkat melingkar
+    # =========================
+
+    radius_base = 5
+    radius_shrink = 0.8
+
+    cylinder_height = 0.4
+
+    for i in range(3):
+
+        radius = radius_base - (i * radius_shrink)
+
+        current_y = current_top
+
+        glColor3f(0.62, 0.58, 0.52)
+
+        glPushMatrix()
+
+        # posisi bawah cylinder
+        glTranslatef(0, current_y, 0)
+
+        # putar agar berdiri
+        glRotatef(-90, 1, 0, 0)
+
+        # body cylinder
+        gluCylinder(
+            quadric,
+            radius,
+            radius,
+            cylinder_height,
+            64,
+            4,
+        )
+
+        # tutup bawah
+        gluDisk(
+            quadric,
+            0,
+            radius,
+            64,
+            1,
+        )
+
+        # tutup atas
+        glTranslatef(0, 0, cylinder_height)
+
+        gluDisk(
+            quadric,
+            0,
+            radius,
+            64,
+            1,
+        )
+
+        glPopMatrix()
+
+        current_top += cylinder_height
+
+    #     # Ornamen sudut
+    #     glColor3f(*SA)
+    #     for dx in [-sx / 2 + 0.4, sx / 2 - 0.4]:
+    #         for dz in [-sz / 2 + 0.4, sz / 2 - 0.4]:
+    #             glPushMatrix()
+    #             glTranslatef(dx, yo + sy, dz)
+    #             gluCylinder(quadric, 0.15, 0.10, 0.35, 6, 2)
+    #             glPopMatrix()
+    #     yo += sy
 
     # # 3 teras lingkaran
     # circ = [(5.8, 0.8, 16), (4.4, 0.8, 12), (3.1, 0.8, 8)]
