@@ -3,33 +3,7 @@ import math
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-
-def draw_box():
-    v = [
-        [-0.5, -0.5, -0.5],
-        [0.5, -0.5, -0.5],
-        [0.5, 0.5, -0.5],
-        [-0.5, 0.5, -0.5],
-        [-0.5, -0.5, 0.5],
-        [0.5, -0.5, 0.5],
-        [0.5, 0.5, 0.5],
-        [-0.5, 0.5, 0.5],
-    ]
-    faces = [
-        [0, 1, 2, 3],
-        [4, 5, 6, 7],
-        [0, 1, 5, 4],
-        [2, 3, 7, 6],
-        [0, 3, 7, 4],
-        [1, 2, 6, 5],
-    ]
-    normals = [[0, 0, -1], [0, 0, 1], [0, -1, 0], [0, 1, 0], [-1, 0, 0], [1, 0, 0]]
-    glBegin(GL_QUADS)
-    for fi, face in enumerate(faces):
-        glNormal3fv(normals[fi])
-        for vi in face:
-            glVertex3fv(v[vi])
-    glEnd()
+from stupa import draw_box, draw_stupa
 
 
 def draw_borobudur(quadric):
@@ -45,8 +19,8 @@ def draw_borobudur(quadric):
     # BOROBUDUR BASE
     # =========================
 
-    STONE = (0.55, 0.52, 0.48)
-    STONE_DARK = (0.38, 0.35, 0.30)
+    STONE = (0.42, 0.39, 0.35)
+    STONE_DARK = (0.32, 0.30, 0.28)
 
     # kaki
     foot_h = 0.4
@@ -99,7 +73,7 @@ def draw_borobudur(quadric):
     # =========================
 
     radius_base = 5
-    radius_shrink = 0.8
+    radius_shrink = 1
 
     cylinder_height = 0.4
 
@@ -154,208 +128,45 @@ def draw_borobudur(quadric):
         current_top += cylinder_height
 
     # =========================
-    # CYLINDER STUPA L1
+    # STUPA KECIL MELINGKAR
     # =========================
 
-    radius_base = 2
-    radius_shrink = 0.2
+    layers = [
+        (16, 4.5),
+        (12, 3.5),
+        (8, 2.5),
+    ]
 
-    cylinder_height = 0.1
+    base_y = current_top - (2 * cylinder_height)
 
-    for i in range(2):
+    for layer_idx, (count, ring_radius) in enumerate(layers):
 
-        radius = radius_base - (i * radius_shrink)
+        layer_y = base_y + (layer_idx * cylinder_height)
 
-        glColor3f(0.70, 0.66, 0.60)
+        for i in range(count):
 
-        glPushMatrix()
+            angle = (2 * math.pi * i) / count
 
-        glTranslatef(0, current_top, 0)
+            x = math.cos(angle) * ring_radius
+            z = math.sin(angle) * ring_radius
 
-        glRotatef(-90, 1, 0, 0)
+            glPushMatrix()
 
-        gluCylinder(
-            quadric,
-            radius,
-            radius,
-            cylinder_height,
-            64,
-            2,
-        )
+            glTranslatef(x, layer_y, z)
 
-        gluDisk(quadric, 0, radius, 64, 1)
+            draw_stupa(quadric, scale=0.2)
 
-        glTranslatef(0, 0, cylinder_height)
-
-        gluDisk(quadric, 0, radius, 64, 1)
-
-        glPopMatrix()
-
-        current_top += cylinder_height
-
-    # =========================
-    # CYLINDER STUPA L2
-    # =========================
-
-    radius_base = 1.7
-    radius_shrink = 0.05
-
-    cylinder_height = 0.05
-
-    for i in range(2):
-
-        radius = radius_base - (i * radius_shrink)
-
-        glColor3f(0.76, 0.72, 0.65)
-
-        glPushMatrix()
-
-        glTranslatef(0, current_top, 0)
-
-        glRotatef(-90, 1, 0, 0)
-
-        gluCylinder(
-            quadric,
-            radius,
-            radius,
-            cylinder_height,
-            64,
-            2,
-        )
-
-        gluDisk(quadric, 0, radius, 64, 1)
-
-        glTranslatef(0, 0, cylinder_height)
-
-        gluDisk(quadric, 0, radius, 64, 1)
-
-        glPopMatrix()
-
-        current_top += cylinder_height
+            glPopMatrix()
 
     # =========================
     # STUPA UTAMA
     # =========================
 
-    # body stupa
-    body_radius = 1.6
-    body_h = 1.0
-
-    glColor3f(0.72, 0.68, 0.60)
-
-    glPushMatrix()
-
-    glTranslatef(0, current_top, 0)
-    glRotatef(-90, 1, 0, 0)
-
-    gluCylinder(
-        quadric,
-        body_radius,
-        body_radius,
-        body_h,
-        64,
-        4,
-    )
-
-    gluDisk(
-        quadric,
-        0,
-        body_radius,
-        64,
-        1,
-    )
-
-    glTranslatef(0, 0, body_h)
-
-    gluDisk(
-        quadric,
-        0,
-        body_radius,
-        64,
-        1,
-    )
-
-    glPopMatrix()
-
-    current_top += body_h
-
-    # # =========================
-    # # HEMISPHERE
-    # # =========================
-
-    sphere_radius = 1.15
-
-    glColor3f(0.78, 0.74, 0.66)
-
     glPushMatrix()
 
     glTranslatef(0, current_top, 0)
 
-    # gepeng hemisphere
-    glScalef(
-        sphere_radius * 1.4,
-        sphere_radius * 0.4,
-        sphere_radius * 1.4,
-    )
-
-    gluSphere(
-        quadric,
-        1,
-        32,
-        16,
-    )
-
-    glPopMatrix()
-
-    current_top += sphere_radius * 0.4
-
-    # # =========================
-    # # HARMIKA
-    # # =========================
-
-    harmika_h = 0.2
-
-    glColor3f(0.60, 0.58, 0.54)
-
-    glPushMatrix()
-
-    glTranslatef(
-        0,
-        current_top + harmika_h / 2,
-        0,
-    )
-
-    glScalef(0.9, harmika_h, 0.9)
-
-    draw_box()
-
-    glPopMatrix()
-
-    current_top += harmika_h
-
-    # # =========================
-    # # PUNCAK
-    # # =========================
-
-    cone_h = 1.5
-    cone_radius = 0.4
-
-    glColor3f(0.85, 0.78, 0.62)
-
-    glPushMatrix()
-
-    glTranslatef(0, current_top, 0)
-
-    glRotatef(-90, 1, 0, 0)
-
-    gluCylinder(
-        quadric,
-        cone_radius,
-        0.25,
-        cone_h,
-        32,
-        4,
-    )
+    draw_stupa(quadric, scale=0.8)
 
     glPopMatrix()
 
