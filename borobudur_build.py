@@ -41,14 +41,6 @@ def draw_borobudur(quadric):
 
     glScalef(2.5, 2.5, 2.5)
 
-    # Platform dasar
-    # glColor3f(*SD)
-    # glPushMatrix()
-    # glTranslatef(0, 0.25, 0)
-    # glScalef(22, 0.5, 22)
-    # draw_box()
-    # glPopMatrix()
-
     # =========================
     # BOROBUDUR BASE
     # =========================
@@ -68,28 +60,6 @@ def draw_borobudur(quadric):
     glPopMatrix()
 
     current_top = foot_h
-
-    # # 6 teras persegi
-    # tiers = [
-    #     (15, 1, 15),
-    #     (13, 1, 13),
-    #     (11, 1, 11),
-    #     (9.5, 1, 9.5),
-    #     (8, 1, 8),
-    #     (6.5, 1, 6.5),
-    # ]
-    # yo = 0.5
-    # for i, (sx, sy, sz) in enumerate(tiers):
-    #     t = i / len(tiers)
-    #     rc = SC[0] + t * 0.06
-    #     gc = SC[1] + t * 0.05
-    #     bc = SC[2] + t * 0.04
-    #     glColor3f(rc, gc, bc)
-    #     glPushMatrix()
-    #     glTranslatef(0, yo + sy / 2, 0)
-    #     glScalef(sx, sy, sz)
-    #     draw_box()
-    #     glPopMatrix()
 
     # =========================
     # 5 tingkat persegi
@@ -183,66 +153,210 @@ def draw_borobudur(quadric):
 
         current_top += cylinder_height
 
-    #     # Ornamen sudut
-    #     glColor3f(*SA)
-    #     for dx in [-sx / 2 + 0.4, sx / 2 - 0.4]:
-    #         for dz in [-sz / 2 + 0.4, sz / 2 - 0.4]:
-    #             glPushMatrix()
-    #             glTranslatef(dx, yo + sy, dz)
-    #             gluCylinder(quadric, 0.15, 0.10, 0.35, 6, 2)
-    #             glPopMatrix()
-    #     yo += sy
+    # =========================
+    # CYLINDER STUPA L1
+    # =========================
 
-    # # 3 teras lingkaran
-    # circ = [(5.8, 0.8, 16), (4.4, 0.8, 12), (3.1, 0.8, 8)]
-    # for ro, h, ns in circ:
-    #     ri = ro - 0.85
-    #     glColor3f(*SC)
-    #     glPushMatrix()
-    #     glTranslatef(0, yo, 0)
-    #     gluCylinder(q, ro, ro, h, 32, 2)
-    #     gluCylinder(q, ri, ri, h, 32, 2)
-    #     glTranslatef(0, 0, h)
-    #     gluDisk(q, ri, ro, 32, 3)
-    #     glPopMatrix()
-    #     glPushMatrix()
-    #     glTranslatef(0, yo, 0)
-    #     gluDisk(q, ri, ro, 32, 3)
-    #     glPopMatrix()
+    radius_base = 2
+    radius_shrink = 0.2
 
-    #     # Stupa kecil
-    #     glColor3f(*SA)
-    #     sr = (ro + ri) / 2
-    #     for j in range(ns):
-    #         ang = j / ns * 2 * math.pi
-    #         sx_ = sr * math.cos(ang)
-    #         sz_ = sr * math.sin(ang)
-    #         glPushMatrix()
-    #         glTranslatef(sx_, yo + h, sz_)
-    #         gluCylinder(q, 0.20, 0.20, 0.30, 8, 2)
-    #         glTranslatef(0, 0.30, 0)
-    #         gluSphere(q, 0.26, 8, 6)
-    #         glTranslatef(0, 0.22, 0)
-    #         gluCylinder(q, 0.05, 0, 0.25, 6, 2)
-    #         glPopMatrix()
-    #     yo += h
+    cylinder_height = 0.1
 
-    # # Stupa utama
-    # glColor3f(0.66, 0.61, 0.52)
+    for i in range(2):
+
+        radius = radius_base - (i * radius_shrink)
+
+        glColor3f(0.70, 0.66, 0.60)
+
+        glPushMatrix()
+
+        glTranslatef(0, current_top, 0)
+
+        glRotatef(-90, 1, 0, 0)
+
+        gluCylinder(
+            quadric,
+            radius,
+            radius,
+            cylinder_height,
+            64,
+            2,
+        )
+
+        gluDisk(quadric, 0, radius, 64, 1)
+
+        glTranslatef(0, 0, cylinder_height)
+
+        gluDisk(quadric, 0, radius, 64, 1)
+
+        glPopMatrix()
+
+        current_top += cylinder_height
+
+    # =========================
+    # CYLINDER STUPA L2
+    # =========================
+
+    radius_base = 1.7
+    radius_shrink = 0.05
+
+    cylinder_height = 0.05
+
+    for i in range(2):
+
+        radius = radius_base - (i * radius_shrink)
+
+        glColor3f(0.76, 0.72, 0.65)
+
+        glPushMatrix()
+
+        glTranslatef(0, current_top, 0)
+
+        glRotatef(-90, 1, 0, 0)
+
+        gluCylinder(
+            quadric,
+            radius,
+            radius,
+            cylinder_height,
+            64,
+            2,
+        )
+
+        gluDisk(quadric, 0, radius, 64, 1)
+
+        glTranslatef(0, 0, cylinder_height)
+
+        gluDisk(quadric, 0, radius, 64, 1)
+
+        glPopMatrix()
+
+        current_top += cylinder_height
+
+    # =========================
+    # STUPA UTAMA
+    # =========================
+
+    # body stupa
+    body_radius = 1.6
+    body_h = 1.0
+
+    glColor3f(0.72, 0.68, 0.60)
+
+    glPushMatrix()
+
+    glTranslatef(0, current_top, 0)
+    glRotatef(-90, 1, 0, 0)
+
+    gluCylinder(
+        quadric,
+        body_radius,
+        body_radius,
+        body_h,
+        64,
+        4,
+    )
+
+    gluDisk(
+        quadric,
+        0,
+        body_radius,
+        64,
+        1,
+    )
+
+    glTranslatef(0, 0, body_h)
+
+    gluDisk(
+        quadric,
+        0,
+        body_radius,
+        64,
+        1,
+    )
+
+    glPopMatrix()
+
+    current_top += body_h
+
+    # # =========================
+    # # HEMISPHERE
+    # # =========================
+
+    sphere_radius = 1.15
+
+    glColor3f(0.78, 0.74, 0.66)
+
+    glPushMatrix()
+
+    glTranslatef(0, current_top, 0)
+
+    # gepeng hemisphere
+    glScalef(
+        sphere_radius * 1.4,
+        sphere_radius * 0.4,
+        sphere_radius * 1.4,
+    )
+
+    gluSphere(
+        quadric,
+        1,
+        32,
+        16,
+    )
+
+    glPopMatrix()
+
+    current_top += sphere_radius * 0.4
+
+    # # =========================
+    # # HARMIKA
+    # # =========================
+
+    harmika_h = 0.2
+
+    glColor3f(0.60, 0.58, 0.54)
+
+    glPushMatrix()
+
+    glTranslatef(
+        0,
+        current_top + harmika_h / 2,
+        0,
+    )
+
+    glScalef(0.9, harmika_h, 0.9)
+
+    draw_box()
+
+    glPopMatrix()
+
+    current_top += harmika_h
+
+    # # =========================
+    # # PUNCAK
+    # # =========================
+
+    # cone_h = 2.0
+    # cone_radius = 0.6
+
+    # glColor3f(0.85, 0.78, 0.62)
+
     # glPushMatrix()
-    # glTranslatef(0, yo, 0)
-    # gluCylinder(q, 1.25, 1.05, 1.60, 16, 4)
-    # glTranslatef(0, 1.60, 0)
-    # glColor3f(0.72, 0.67, 0.57)
-    # gluSphere(q, 1.35, 20, 16)
-    # glColor3f(0.82, 0.77, 0.62)
-    # glTranslatef(0, 0.85, 0)
-    # gluDisk(q, 0, 0.50, 12, 2)
-    # glTranslatef(0, 0.10, 0)
-    # gluSphere(q, 0.46, 12, 10)
-    # glColor3f(0.92, 0.87, 0.72)
-    # glTranslatef(0, 0.50, 0)
-    # gluCylinder(q, 0.14, 0, 1.10, 8, 4)
+
+    # glTranslatef(0, current_top, 0)
+
+    # glRotatef(-90, 1, 0, 0)
+
+    # gluCylinder(
+    #     quadric,
+    #     cone_radius,
+    #     0.25,
+    #     cone_h,
+    #     32,
+    #     4,
+    # )
+
     # glPopMatrix()
 
     glPopMatrix()
