@@ -1,6 +1,9 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+# STUPA_BIG = (0.78, 0.74, 0.66)
+# STUPA_SMALL = (0.40, 0.38, 0.35)
+
 
 def draw_box():
     v = [
@@ -30,7 +33,9 @@ def draw_box():
     glEnd()
 
 
-def draw_stupa(q, scale=1.0):
+def draw_stupa(q, scale=1.0, small=False):
+    STUPA_BIG = (0.78, 0.74, 0.66)
+    STUPA_SMALL = (0.40, 0.38, 0.35)
 
     # =========================
     # cylinder stupa l1
@@ -146,7 +151,10 @@ def draw_stupa(q, scale=1.0):
 
     sphere_radius = 1.15 * scale
 
-    glColor3f(0.78, 0.74, 0.66)
+    if small:
+        glColor3f(*STUPA_SMALL)
+    else:
+        glColor3f(*STUPA_BIG)
 
     glPushMatrix()
 
@@ -157,6 +165,11 @@ def draw_stupa(q, scale=1.0):
         sphere_radius * 0.4,
         sphere_radius * 1.4,
     )
+
+    if small:
+        glMaterialf(GL_FRONT, GL_SHININESS, 2.0)
+    else:
+        glMaterialf(GL_FRONT, GL_SHININESS, 8.0)
 
     gluSphere(q, 1, 24, 12)
 

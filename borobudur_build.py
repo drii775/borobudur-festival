@@ -7,10 +7,6 @@ from stupa import draw_box, draw_stupa
 
 
 def draw_borobudur(quadric):
-    SC = (0.44, 0.40, 0.34)
-    SD = (0.30, 0.27, 0.22)
-    SA = (0.58, 0.53, 0.44)
-
     glPushMatrix()
 
     glScalef(2.5, 2.5, 2.5)
@@ -154,7 +150,7 @@ def draw_borobudur(quadric):
 
             glTranslatef(x, layer_y, z)
 
-            draw_stupa(quadric, scale=0.2)
+            draw_stupa(quadric, scale=0.2, small=True)
 
             glPopMatrix()
 

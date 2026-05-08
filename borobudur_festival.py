@@ -197,10 +197,10 @@ def setup_lighting():
     glEnable(GL_LIGHT1)
     glEnable(GL_COLOR_MATERIAL)
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.07, 0.06, 0.11, 1.0])
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.30, 0.30, 0.35, 1.0])
 
     glLightfv(GL_LIGHT0, GL_POSITION, [0.0, 18.0, 0.0, 1.0])
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.9, 0.6, 0.2, 1.0])
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, [0.65, 0.65, 0.70, 1.0])
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.02)
     glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001)
 
