@@ -35,7 +35,7 @@ def draw_box():
 
 def draw_stupa(q, scale=1.0, small=False):
     STUPA_BIG = (0.78, 0.74, 0.66)
-    STUPA_SMALL = (0.62, 0.58, 0.52)
+    STUPA_SMALL = (0.74, 0.70, 0.64)
 
     # =========================
     # cylinder stupa l1
@@ -83,7 +83,7 @@ def draw_stupa(q, scale=1.0, small=False):
     # cylinder stupa l2
     # =========================
 
-    radius_base = 1.7 * scale
+    radius_base = 1.5 * scale
     radius_shrink = 0.05 * scale
 
     cylinder_height = 0.05 * scale
@@ -123,8 +123,11 @@ def draw_stupa(q, scale=1.0, small=False):
     # body stupa
     # =========================
 
-    body_radius = 1.6 * scale
-    body_h = 1.0 * scale
+    # body_radius = 1.6 * scale
+    body_h = 1.5 * scale
+
+    bottom_radius = 1.35 * scale
+    top_radius = 1.0 * scale
 
     glColor3f(0.72, 0.68, 0.60)
 
@@ -133,13 +136,13 @@ def draw_stupa(q, scale=1.0, small=False):
     glTranslatef(0, current_top, 0)
     glRotatef(-90, 1, 0, 0)
 
-    gluCylinder(q, body_radius, body_radius, body_h, 32, 4)
+    gluCylinder(q, bottom_radius, top_radius, body_h, 32, 4)
 
-    gluDisk(q, 0, body_radius, 32, 1)
+    gluDisk(q, 0, bottom_radius, 32, 1)
 
     glTranslatef(0, 0, body_h)
 
-    gluDisk(q, 0, body_radius, 32, 1)
+    gluDisk(q, 0, top_radius, 32, 1)
 
     glPopMatrix()
 
@@ -149,7 +152,7 @@ def draw_stupa(q, scale=1.0, small=False):
     # hemisphere
     # =========================
 
-    sphere_radius = 1.15 * scale
+    sphere_radius = 0.71 * scale
 
     if small:
         glColor3f(*STUPA_SMALL)
@@ -162,7 +165,7 @@ def draw_stupa(q, scale=1.0, small=False):
 
     glScalef(
         sphere_radius * 1.4,
-        sphere_radius * 0.4,
+        sphere_radius * 0.9,
         sphere_radius * 1.4,
     )
 
@@ -170,18 +173,18 @@ def draw_stupa(q, scale=1.0, small=False):
 
     glPopMatrix()
 
-    current_top += sphere_radius * 0.4
+    current_top += sphere_radius * 0.7
 
     # =========================
     # harmika
     # =========================
 
-    harmika_h = 0.2 * scale
+    harmika_h = 0.3 * scale
 
     if small:
-        glColor3f(0.45, 0.43, 0.40)
+        glColor3f(0.78, 0.76, 0.72)
     else:
-        glColor3f(0.40, 0.38, 0.35)
+        glColor3f(0.70, 0.68, 0.64)
 
     glPushMatrix()
 
@@ -207,7 +210,7 @@ def draw_stupa(q, scale=1.0, small=False):
     # cone
     # =========================
 
-    cone_h = 1.2 * scale
+    cone_h = 1.0 * scale
     cone_radius = 0.4 * scale
 
     glColor3f(0.85, 0.82, 0.72)

@@ -3,7 +3,8 @@ import math
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from stupa import draw_box, draw_stupa
+from stupa import *
+from tangga import *
 
 
 def draw_borobudur(quadric):
@@ -36,8 +37,8 @@ def draw_borobudur(quadric):
     # =========================
 
     base_size = 18
-    shrink = 1.6
-    cube_h = 1.2
+    shrink = 1.8
+    cube_h = 0.8
 
     for i in range(5):
 
@@ -60,6 +61,50 @@ def draw_borobudur(quadric):
 
         draw_box()
 
+        glPopMatrix()
+
+        # # =========================
+        # # TANGGA DEPAN
+        # # =========================
+
+        # glPushMatrix()
+
+        # glTranslatef(
+        #     0,
+        #     current_top,
+        #     (size / 2) + 0.6,
+        # )
+
+        # draw_stairs(scale=1.0)
+
+        # glPopMatrix()
+        # -----
+
+        # DEPAN
+        glPushMatrix()
+        glTranslatef(0, current_top, (size / 2) + 0.6)
+        draw_stairs(scale=1.0)
+        glPopMatrix()
+
+        # BELAKANG
+        glPushMatrix()
+        glTranslatef(0, current_top, -(size / 2) - 0.6)
+        glRotatef(180, 0, 1, 0)
+        draw_stairs(scale=1.0)
+        glPopMatrix()
+
+        # KANAN
+        glPushMatrix()
+        glTranslatef((size / 2) + 0.6, current_top, 0)
+        glRotatef(90, 0, 1, 0)
+        draw_stairs(scale=1.0)
+        glPopMatrix()
+
+        # KIRI
+        glPushMatrix()
+        glTranslatef(-(size / 2) - 0.6, current_top, 0)
+        glRotatef(-90, 0, 1, 0)
+        draw_stairs(scale=1.0)
         glPopMatrix()
 
         current_top += cube_h
@@ -165,5 +210,17 @@ def draw_borobudur(quadric):
     draw_stupa(quadric, scale=0.8)
 
     glPopMatrix()
+
+    # # =========================
+    # # TANGGA DEPAN
+    # # =========================
+
+    # glPushMatrix()
+
+    # glTranslatef(0, 0, 11)
+
+    # draw_stairs()
+
+    # glPopMatrix()
 
     glPopMatrix()
