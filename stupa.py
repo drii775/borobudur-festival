@@ -35,7 +35,7 @@ def draw_box():
 
 def draw_stupa(q, scale=1.0, small=False):
     STUPA_BIG = (0.78, 0.74, 0.66)
-    STUPA_SMALL = (0.40, 0.38, 0.35)
+    STUPA_SMALL = (0.62, 0.58, 0.52)
 
     # =========================
     # cylinder stupa l1
@@ -166,12 +166,7 @@ def draw_stupa(q, scale=1.0, small=False):
         sphere_radius * 1.4,
     )
 
-    if small:
-        glMaterialf(GL_FRONT, GL_SHININESS, 2.0)
-    else:
-        glMaterialf(GL_FRONT, GL_SHININESS, 8.0)
-
-    gluSphere(q, 1, 24, 12)
+    gluSphere(q, 1, 48, 32)
 
     glPopMatrix()
 
@@ -183,7 +178,10 @@ def draw_stupa(q, scale=1.0, small=False):
 
     harmika_h = 0.2 * scale
 
-    glColor3f(0.60, 0.58, 0.54)
+    if small:
+        glColor3f(0.45, 0.43, 0.40)
+    else:
+        glColor3f(0.40, 0.38, 0.35)
 
     glPushMatrix()
 
