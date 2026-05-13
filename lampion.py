@@ -3,15 +3,19 @@ from OpenGL.GLU import *
 import random
 import math
 
-MAX_PARTICLES = 150
-SPAWN_RATE = 2
-PARTICLE_MIN_Y = -8.0
-PARTICLE_MAX_Y = 28.0
+# ==================================================
+# KONFIGURASI
+# ==================================================
+MAX_PARTICLES = 260
+SPAWN_RATE = 3
+
+PARTICLE_MIN_Y = 1.0
+PARTICLE_MAX_Y = 90.0
 
 
-# ─────────────────────────────────────────────
-#  KELAS: PARTIKEL LAMPION
-# ─────────────────────────────────────────────
+# ==================================================
+# KELAS PARTIKEL LAMPION
+# ==================================================
 class LampionParticle:
 
     COLOR_PALETTE = [
@@ -27,27 +31,34 @@ class LampionParticle:
 
     def reset(self):
 
-        spread = 13.0
+        # area penyebaran lampion
+        spread = 38.0
 
         self.x = random.uniform(-spread, spread)
-        self.y = PARTICLE_MIN_Y + random.uniform(-2, 2)
+        self.y = PARTICLE_MIN_Y + random.uniform(-1.0, 2.0)
         self.z = random.uniform(-spread, spread)
 
-        self.vy = random.uniform(0.04, 0.08)
-        self.vx = random.uniform(-0.004, 0.004)
-        self.vz = random.uniform(-0.004, 0.004)
+        # gerakan naik
+        self.vy = random.uniform(0.12, 0.25)
 
-        self.osc_amp = random.uniform(0.002, 0.006)
-        self.osc_speed = random.uniform(1.0, 2.5)
+        # gerakan bebas
+        self.vx = random.uniform(-0.06, 0.06)
+        self.vz = random.uniform(-0.06, 0.06)
+
+        # efek angin
+        self.osc_amp = random.uniform(0.03, 0.12)
+        self.osc_speed = random.uniform(0.3, 6.0)
         self.osc_phase = random.uniform(0, 2 * math.pi)
 
-        self.color = random.choice(self.COLOR_PALETTE)
+        self.color = random.choice(
+            self.COLOR_PALETTE
+        )
 
-        # ukuran lampion
-        self.size = random.uniform(0.45, 0.75)
+        # ukuran awal
+        self.size = random.uniform(0.45, 0.90)
 
         self.age = 0
-        self.life = random.uniform(220, 420)
+        self.life = random.uniform(260, 520)
 
         self.alpha = 0.0
 
@@ -55,29 +66,49 @@ class LampionParticle:
 
         self.age += 1
 
+        # naik
         self.y += self.vy
 
+        # gerakan arah acak
         self.x += (
             self.vx +
             math.sin(
-                time * self.osc_speed + self.osc_phase
+                time * self.osc_speed +
+                self.osc_phase
             ) * self.osc_amp
         )
 
-        self.z += self.vz
+        self.z += (
+            self.vz +
+            math.cos(
+                time * self.osc_speed +
+                self.osc_phase
+            ) * self.osc_amp * 0.5
+        )
 
-        fade = 30
+        # fade in/out
+        fade = 35
 
         if self.age < fade:
-            self.alpha = self.age / fade
+
+            self.alpha = (
+                self.age / fade
+            )
 
         elif self.age > self.life - fade:
-            self.alpha = (self.life - self.age) / fade
+
+            self.alpha = (
+                (self.life - self.age) / fade
+            )
 
         else:
+
             self.alpha = 1.0
 
-        self.alpha = max(0.0, min(1.0, self.alpha))
+        self.alpha = max(
+            0.0,
+            min(1.0, self.alpha)
+        )
 
         return (
             self.y > PARTICLE_MAX_Y
@@ -85,9 +116,9 @@ class LampionParticle:
         )
 
 
-# ─────────────────────────────────────────────
-#  SISTEM PARTIKEL
-# ─────────────────────────────────────────────
+# ==================================================
+# SISTEM PARTIKEL
+# ==================================================
 class ParticleSystem:
 
     def __init__(self, max_p=MAX_PARTICLES):
@@ -105,19 +136,29 @@ class ParticleSystem:
             if not p.update(self.time)
         ]
 
+        # spawn random agar tidak berkelompok
+        spawn_random = random.randint(
+            1,
+            SPAWN_RATE
+        )
+
         need = min(
-            SPAWN_RATE,
+            spawn_random,
             self.max_p - len(self.particles)
         )
 
         for _ in range(need):
-            self.particles.append(
-                LampionParticle()
-            )
+
+            if random.random() > 0.15:
+
+                self.particles.append(
+                    LampionParticle()
+                )
 
     def render(self, q):
 
         glEnable(GL_BLEND)
+
         glBlendFunc(
             GL_SRC_ALPHA,
             GL_ONE_MINUS_SRC_ALPHA
@@ -128,7 +169,16 @@ class ParticleSystem:
         for p in self.particles:
 
             r, g, b = p.color
-            s = p.size
+
+            # ukuran mengecil saat jauh
+            distance_scale = max(
+                0.35,
+                1.0 - (
+                    p.y / PARTICLE_MAX_Y
+                )
+            )
+
+            s = p.size * distance_scale
 
             glPushMatrix()
 
@@ -138,7 +188,30 @@ class ParticleSystem:
                 p.z
             )
 
-            # ukuran lampion
+            # ==================================================
+            # GOYANGAN ANGIN
+            # ==================================================
+            glRotatef(
+                math.sin(
+                    self.time *
+                    p.osc_speed
+                ) * 12,
+                0,
+                0,
+                1
+            )
+
+            glRotatef(
+                math.cos(
+                    self.time *
+                    p.osc_speed
+                ) * 8,
+                1,
+                0,
+                0
+            )
+
+            # skala lampion
             glScalef(
                 s,
                 s * 1.8,
@@ -151,11 +224,26 @@ class ParticleSystem:
             glBegin(GL_QUADS)
 
             # DEPAN
-            glColor4f(r, g, b, p.alpha)
+            glColor4f(
+                r,
+                g,
+                b,
+                p.alpha
+            )
 
-            glVertex3f(-0.22, -0.35, 0.22)
-            glVertex3f( 0.22, -0.35, 0.22)
+            glVertex3f(
+                -0.22,
+                -0.35,
+                0.22
+            )
 
+            glVertex3f(
+                 0.22,
+                -0.35,
+                 0.22
+            )
+
+            # atas lebih gelap
             glColor4f(
                 r * 0.35,
                 g * 0.25,
@@ -163,14 +251,37 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f( 0.22, 0.35, 0.22)
-            glVertex3f(-0.22, 0.35, 0.22)
+            glVertex3f(
+                 0.22,
+                 0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                 0.35,
+                 0.22
+            )
 
             # BELAKANG
-            glColor4f(r, g, b, p.alpha)
+            glColor4f(
+                r,
+                g,
+                b,
+                p.alpha
+            )
 
-            glVertex3f(-0.22, -0.35, -0.22)
-            glVertex3f( 0.22, -0.35, -0.22)
+            glVertex3f(
+                -0.22,
+                -0.35,
+                -0.22
+            )
+
+            glVertex3f(
+                 0.22,
+                -0.35,
+                -0.22
+            )
 
             glColor4f(
                 r * 0.35,
@@ -179,8 +290,17 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f( 0.22, 0.35, -0.22)
-            glVertex3f(-0.22, 0.35, -0.22)
+            glVertex3f(
+                 0.22,
+                 0.35,
+                -0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                 0.35,
+                -0.22
+            )
 
             # KIRI
             glColor4f(
@@ -190,8 +310,17 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f(-0.22, -0.35, -0.22)
-            glVertex3f(-0.22, -0.35,  0.22)
+            glVertex3f(
+                -0.22,
+                -0.35,
+                -0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                -0.35,
+                 0.22
+            )
 
             glColor4f(
                 r * 0.30,
@@ -200,8 +329,17 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f(-0.22, 0.35,  0.22)
-            glVertex3f(-0.22, 0.35, -0.22)
+            glVertex3f(
+                -0.22,
+                 0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                 0.35,
+                -0.22
+            )
 
             # KANAN
             glColor4f(
@@ -211,8 +349,17 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f(0.22, -0.35, -0.22)
-            glVertex3f(0.22, -0.35,  0.22)
+            glVertex3f(
+                0.22,
+               -0.35,
+               -0.22
+            )
+
+            glVertex3f(
+                0.22,
+               -0.35,
+                0.22
+            )
 
             glColor4f(
                 r * 0.30,
@@ -221,21 +368,49 @@ class ParticleSystem:
                 p.alpha
             )
 
-            glVertex3f(0.22, 0.35,  0.22)
-            glVertex3f(0.22, 0.35, -0.22)
+            glVertex3f(
+                0.22,
+                0.35,
+                0.22
+            )
+
+            glVertex3f(
+                0.22,
+                0.35,
+               -0.22
+            )
 
             # ATAS
             glColor4f(
-                r * 0.20,
-                g * 0.14,
-                b * 0.10,
+                r * 0.18,
+                g * 0.12,
+                b * 0.08,
                 p.alpha
             )
 
-            glVertex3f(-0.22, 0.35, -0.22)
-            glVertex3f(-0.22, 0.35,  0.22)
-            glVertex3f( 0.22, 0.35,  0.22)
-            glVertex3f( 0.22, 0.35, -0.22)
+            glVertex3f(
+                -0.22,
+                 0.35,
+                -0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                 0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                 0.22,
+                 0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                 0.22,
+                 0.35,
+                -0.22
+            )
 
             glEnd()
 
@@ -251,10 +426,29 @@ class ParticleSystem:
 
             glBegin(GL_LINE_LOOP)
 
-            glVertex3f(-0.22, -0.35, -0.22)
-            glVertex3f(-0.22, -0.35,  0.22)
-            glVertex3f( 0.22, -0.35,  0.22)
-            glVertex3f( 0.22, -0.35, -0.22)
+            glVertex3f(
+                -0.22,
+                -0.35,
+                -0.22
+            )
+
+            glVertex3f(
+                -0.22,
+                -0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                 0.22,
+                -0.35,
+                 0.22
+            )
+
+            glVertex3f(
+                 0.22,
+                -0.35,
+                -0.22
+            )
 
             glEnd()
 
@@ -278,15 +472,15 @@ class ParticleSystem:
 
             gluSphere(
                 q,
-                0.05,
-                10,
-                10
+                0.06,
+                12,
+                12
             )
 
             glPopMatrix()
 
             # ==================================================
-            # GLOW BAWAH
+            # GLOW LEMBUT
             # ==================================================
             glEnable(GL_BLEND)
 
@@ -299,7 +493,7 @@ class ParticleSystem:
 
             glTranslatef(
                 0,
-                -0.28,
+                -0.24,
                 0
             )
 
@@ -307,14 +501,14 @@ class ParticleSystem:
                 1.0,
                 0.70,
                 0.20,
-                p.alpha * 0.14
+                p.alpha * 0.12
             )
 
             gluSphere(
                 q,
-                0.22,
-                12,
-                12
+                0.80,
+                20,
+                20
             )
 
             glPopMatrix()
