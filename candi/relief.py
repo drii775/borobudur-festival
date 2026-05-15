@@ -1,5 +1,5 @@
 from OpenGL.GL import *
-from stupa import draw_box
+from candi.stupa import draw_box
 
 
 def draw_relief_corner(size=18, y=0, layer_h=0.8):

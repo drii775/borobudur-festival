@@ -3,9 +3,9 @@ import math
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from stupa import *
-from tangga import *
-from relief import *
+from candi.stupa import *
+from candi.tangga import *
+from candi.relief import *
 
 
 def draw_borobudur(quadric):
@@ -220,17 +220,5 @@ def draw_borobudur(quadric):
     draw_stupa(quadric, scale=0.8)
 
     glPopMatrix()
-
-    # # =========================
-    # # TANGGA DEPAN
-    # # =========================
-
-    # glPushMatrix()
-
-    # glTranslatef(0, 0, 11)
-
-    # draw_stairs()
-
-    # glPopMatrix()
 
     glPopMatrix()

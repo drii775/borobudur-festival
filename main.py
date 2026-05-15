@@ -32,7 +32,7 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from borobudur_build import draw_borobudur
+from candi.borobudur_build import *
 from tanah import *
 from lampion import *
 from kamera import *

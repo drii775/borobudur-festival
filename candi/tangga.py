@@ -1,5 +1,5 @@
 from OpenGL.GL import *
-from stupa import draw_box
+from candi.stupa import draw_box
 
 
 def draw_stairs(scale=1.0):
