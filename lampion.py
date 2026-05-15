@@ -31,31 +31,74 @@ class LampionParticle:
 
     def reset(self):
 
-        # area penyebaran lampion
-        spread = 38.0
+        # ==================================================
+        # AREA SPAWN
+        # ==================================================
+        spawn_type = random.randint(0, 1)
 
-        self.x = random.uniform(-spread, spread)
+        # ==================================================
+        # AREA CANDI
+        # ==================================================
+        if spawn_type == 0:
+
+            self.x = random.uniform(-12, 12)
+            self.z = random.uniform(-12, 12)
+
+        # ==================================================
+        # AREA TANAH
+        # ==================================================
+        else:
+
+            side = random.randint(0, 3)
+
+            if side == 0:
+
+                self.x = random.uniform(-38, -18)
+                self.z = random.uniform(-38, 38)
+
+            elif side == 1:
+
+                self.x = random.uniform(18, 38)
+                self.z = random.uniform(-38, 38)
+
+            elif side == 2:
+
+                self.x = random.uniform(-38, 38)
+                self.z = random.uniform(-38, -18)
+
+            else:
+
+                self.x = random.uniform(-38, 38)
+                self.z = random.uniform(18, 38)
+
+        # tinggi awal
         self.y = PARTICLE_MIN_Y + random.uniform(-1.0, 2.0)
-        self.z = random.uniform(-spread, spread)
 
-        # gerakan naik
-        self.vy = random.uniform(0.12, 0.25)
+        # ==================================================
+        # GERAKAN
+        # ==================================================
+        self.vy = random.uniform(0.07, 0.16)
 
-        # gerakan bebas
-        self.vx = random.uniform(-0.06, 0.06)
-        self.vz = random.uniform(-0.06, 0.06)
+        self.vx = random.uniform(-0.035, 0.035)
+        self.vz = random.uniform(-0.035, 0.035)
 
-        # efek angin
+        # ==================================================
+        # EFEK ANGIN
+        # ==================================================
         self.osc_amp = random.uniform(0.03, 0.12)
+
         self.osc_speed = random.uniform(0.3, 6.0)
+
         self.osc_phase = random.uniform(0, 2 * math.pi)
 
+        # ==================================================
+        # VISUAL
+        # ==================================================
         self.color = random.choice(self.COLOR_PALETTE)
-
-        # ukuran awal
-        self.size = random.uniform(0.45, 0.90)
+        self.size = random.uniform(0.55, 1.05)
 
         self.age = 0
+
         self.life = random.uniform(260, 520)
 
         self.alpha = 0.0
@@ -64,20 +107,21 @@ class LampionParticle:
 
         self.age += 1
 
-        # naik
+        # gerakan naik
         self.y += self.vy
 
-        # gerakan arah acak
+        # gerakan angin X
         self.x += (
             self.vx + math.sin(time * self.osc_speed + self.osc_phase) * self.osc_amp
         )
 
+        # gerakan angin Z
         self.z += (
             self.vz
             + math.cos(time * self.osc_speed + self.osc_phase) * self.osc_amp * 0.5
         )
 
-        # fade in/out
+        # fade
         fade = 35
 
         if self.age < fade:
@@ -105,7 +149,9 @@ class ParticleSystem:
     def __init__(self, max_p=MAX_PARTICLES):
 
         self.max_p = max_p
+
         self.particles = []
+
         self.time = 0.0
 
     def update(self):
@@ -114,9 +160,8 @@ class ParticleSystem:
 
         self.particles = [p for p in self.particles if not p.update(self.time)]
 
-        # spawn random agar tidak berkelompok
+        # spawn random
         spawn_random = random.randint(1, SPAWN_RATE)
-
         need = min(spawn_random, self.max_p - len(self.particles))
 
         for _ in range(need):
@@ -137,8 +182,12 @@ class ParticleSystem:
 
             r, g, b = p.color
 
-            # ukuran mengecil saat jauh
-            distance_scale = max(0.35, 1.0 - (p.y / PARTICLE_MAX_Y))
+            # ==================================================
+            # UKURAN BERDASARKAN JARAK
+            # ==================================================
+            camera_distance = math.sqrt((p.x * p.x) + (p.y * p.y) + (p.z * p.z))
+
+            distance_scale = max(0.45, 1.4 - (camera_distance / 60.0))
 
             s = p.size * distance_scale
 
@@ -153,7 +202,9 @@ class ParticleSystem:
 
             glRotatef(math.cos(self.time * p.osc_speed) * 8, 1, 0, 0)
 
-            # skala lampion
+            # ==================================================
+            # SKALA
+            # ==================================================
             glScalef(s, s * 1.8, s)
 
             # ==================================================
@@ -168,7 +219,6 @@ class ParticleSystem:
 
             glVertex3f(0.22, -0.35, 0.22)
 
-            # atas lebih gelap
             glColor4f(r * 0.35, g * 0.25, b * 0.18, p.alpha)
 
             glVertex3f(0.22, 0.35, 0.22)
@@ -207,7 +257,6 @@ class ParticleSystem:
             glVertex3f(0.22, -0.35, -0.22)
 
             glVertex3f(0.22, -0.35, 0.22)
-
             glColor4f(r * 0.30, g * 0.20, b * 0.15, p.alpha)
 
             glVertex3f(0.22, 0.35, 0.22)
@@ -257,25 +306,8 @@ class ParticleSystem:
 
             glPopMatrix()
 
-            # ==================================================
-            # GLOW LEMBUT
-            # ==================================================
-            glEnable(GL_BLEND)
-
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE)
-
-            glPushMatrix()
-
-            glTranslatef(0, -0.24, 0)
-
-            glColor4f(1.0, 0.70, 0.20, p.alpha * 0.12)
-
-            gluSphere(q, 0.80, 20, 20)
-
             glPopMatrix()
 
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-            glPopMatrix()
+        glEnable(GL_LIGHTING)
 
         glDisable(GL_BLEND)
