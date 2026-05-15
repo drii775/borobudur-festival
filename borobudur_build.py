@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 
 from stupa import *
 from tangga import *
+from relief import *
 
 
 def draw_borobudur(quadric):
@@ -63,23 +64,9 @@ def draw_borobudur(quadric):
 
         glPopMatrix()
 
-        # # =========================
-        # # TANGGA DEPAN
-        # # =========================
-
-        # glPushMatrix()
-
-        # glTranslatef(
-        #     0,
-        #     current_top,
-        #     (size / 2) + 0.6,
-        # )
-
-        # draw_stairs(scale=1.0)
-
-        # glPopMatrix()
-        # -----
-
+        # =========================
+        # TANGGA DEPAN
+        # =========================
         # DEPAN
         glPushMatrix()
         glTranslatef(0, current_top, (size / 2) + 0.6)
@@ -107,6 +94,29 @@ def draw_borobudur(quadric):
         draw_stairs(scale=1.0)
         glPopMatrix()
 
+        # =========================
+        # RELIEF
+        # =========================
+
+        glPushMatrix()
+
+        glTranslatef(0, current_y, 0)
+
+        for rot in [0, 90, 180, 270]:
+
+            glPushMatrix()
+
+            glRotatef(rot, 0, 1, 0)
+
+            draw_relief_corner(
+                size=size,
+                y=-(cube_h / 2),
+                layer_h=cube_h,
+            )
+
+            glPopMatrix()
+
+        glPopMatrix()
         current_top += cube_h
 
     # =========================
