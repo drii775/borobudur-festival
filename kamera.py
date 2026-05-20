@@ -47,6 +47,8 @@ class Camera:
         rx = math.cos(yr)
         rz = -math.sin(yr)
 
-        self.tx += fx * forward + rx * right
-        self.tz += fz * forward + rz * right
+        speed = 4
+
+        self.tx += (fx * forward + rx * right) * speed
+        self.tz += (fz * forward + rz * right) * speed
         self.ty += up

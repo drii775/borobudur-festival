@@ -2,7 +2,7 @@ from OpenGL.GL import *
 from candi.stupa import *
 
 
-def draw_relief_corner(size=18, y=0, layer_h=0.8):
+def draw_relief_corner(size=18, y=0, layer_h=0.8, show_upper=False):
 
     # =========================
     # UKURAN
@@ -19,12 +19,9 @@ def draw_relief_corner(size=18, y=0, layer_h=0.8):
 
     details = [
         # y_offset, z_offset, scale_y, scale_z, color
-        (0.85, 0.1, 0.3, 1.5, 0.34),
-        (0.75, 0.1, 0.25, 0.2, 0.50),
-        (0.57, 0.1, 0.15, 0.8, 0.38),
-        (0.41, 0.1, 0.18, 0.43, 0.34),
-        (0.25, 0.1, 0.15, 0.2, 0.38),
-        (0.09, 0.1, 0.18, 0.43, 0.42),
+        (0.75, 0.1, 0.5, 1.5, 0.46),
+        (0.5, 0.1, 0.25, 0.8, 0.52),
+        (0.05, 0.1, 0.7, 0.43, 0.58),
     ]
 
     # =========================
@@ -44,7 +41,7 @@ def draw_relief_corner(size=18, y=0, layer_h=0.8):
 
         for y_off, z_off, sy, sz, c in details:
 
-            glColor3f(c, c, c + 0.02)
+            glColor3f(c + 0.05, c + 0.03, c)
 
             # =========================
             # PANJANG KHUSUS SUDUT
@@ -83,13 +80,14 @@ def draw_relief_corner(size=18, y=0, layer_h=0.8):
         # RELIEF ATAS
         # =========================
 
-        draw_upper_ornament(
-            size=size,
-            y=y + lower_h,
-            lower_h=lower_h,
-            seg_x=seg_x,
-            relief_len=relief_len,
-        )
+        if show_upper:
+            draw_upper_ornament(
+                size=size,
+                y=y + lower_h,
+                lower_h=lower_h,
+                seg_x=seg_x,
+                relief_len=relief_len,
+            )
 
 
 # ==================================================
@@ -105,7 +103,7 @@ def draw_upper_ornament(
     relief_len,
 ):
 
-    ornament_count = 7
+    ornament_count = 4
 
     spacing = relief_len / ornament_count
 
@@ -114,42 +112,17 @@ def draw_upper_ornament(
     for i in range(ornament_count):
 
         x = start_x + (i * spacing)
-
-        # =====================================
-        # LIS BAWAH
-        # =====================================
-
-        glColor3f(0.42, 0.42, 0.45)
-
-        glPushMatrix()
-
-        glTranslatef(
-            x,
-            y + 0.01,
-            (size / 2) + 0.12,
-        )
-
-        glScalef(
-            spacing * 0.95,
-            0.06,
-            0.3,
-        )
-
-        draw_box()
-
-        glPopMatrix()
-
         # =====================================
         # TIANG KIRI
         # =====================================
 
-        glColor3f(0.50, 0.50, 0.52)
+        glColor3f(0.62, 0.58, 0.52)
 
         glPushMatrix()
 
         glTranslatef(
             x - (spacing * 0.2),
-            y + 0.2,
+            y + 0.15,
             (size / 2) + 0.12,
         )
 
@@ -171,7 +144,7 @@ def draw_upper_ornament(
 
         glTranslatef(
             x + (spacing * 0.2),
-            y + 0.2,
+            y + 0.15,
             (size / 2) + 0.12,
         )
 
@@ -193,7 +166,7 @@ def draw_upper_ornament(
 
         glTranslatef(
             x,
-            y + 0.38,
+            y + 0.35,
             (size / 2) + 0.12,
         )
 
@@ -211,14 +184,14 @@ def draw_upper_ornament(
         # PATUNG BUDDHA
         # =====================================
 
-        glColor3f(0.58, 0.58, 0.60)
+        glColor3f(0.72, 0.68, 0.60)
 
         # kaki duduk
         glPushMatrix()
 
         glTranslatef(
             x,
-            y + 0.11,
+            y + 0.02,
             (size / 2) + 0.01,
         )
 
@@ -237,7 +210,7 @@ def draw_upper_ornament(
 
         glTranslatef(
             x,
-            y + 0.19,
+            y + 0.1,
             (size / 2) + 0.01,
         )
 
@@ -258,15 +231,15 @@ def draw_upper_ornament(
 
         glTranslatef(
             x,
-            y + 0.26,
+            y + 0.17,
             (size / 2) + 0.01,
         )
 
         gluSphere(
             quadric,
             0.022,
-            10,
-            10,
+            6,
+            6,
         )
 
         glPopMatrix()
@@ -278,7 +251,7 @@ def draw_upper_ornament(
 
         glTranslatef(
             x,
-            y + 0.42,
+            y + 0.38,
             (size / 2) + 0.12,
         )
 

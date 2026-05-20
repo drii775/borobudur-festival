@@ -112,6 +112,7 @@ def draw_borobudur(quadric):
                 size=size,
                 y=-(cube_h / 2),
                 layer_h=cube_h,
+                show_upper=(i >= 2),
             )
 
             glPopMatrix()
@@ -150,7 +151,7 @@ def draw_borobudur(quadric):
             radius,
             radius,
             cylinder_height,
-            64,
+            32,
             4,
         )
 
@@ -159,7 +160,7 @@ def draw_borobudur(quadric):
             quadric,
             0,
             radius,
-            64,
+            32,
             1,
         )
 
@@ -170,7 +171,7 @@ def draw_borobudur(quadric):
             quadric,
             0,
             radius,
-            64,
+            32,
             1,
         )
 
@@ -183,9 +184,9 @@ def draw_borobudur(quadric):
     # =========================
 
     layers = [
-        (16, 4.5),
-        (12, 3.5),
-        (8, 2.5),
+        (12, 4.5),
+        (8, 3.5),
+        (6, 2.5),
     ]
 
     base_y = current_top - (2 * cylinder_height)

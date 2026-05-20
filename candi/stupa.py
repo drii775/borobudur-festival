@@ -48,7 +48,7 @@ def draw_stupa(q, scale=1.0, small=False):
 
     current_top = 0
 
-    for i in range(3):
+    for i in range(2):
 
         radius = radius_base - (i * radius_shrink)
 
@@ -65,15 +65,15 @@ def draw_stupa(q, scale=1.0, small=False):
             radius,
             radius,
             cylinder_height,
-            32,
+            20,
             2,
         )
 
-        gluDisk(q, 0, radius, 32, 1)
+        gluDisk(q, 0, radius, 20, 1)
 
         glTranslatef(0, 0, cylinder_height)
 
-        gluDisk(q, 0, radius, 32, 1)
+        gluDisk(q, 0, radius, 20, 1)
 
         glPopMatrix()
 
@@ -88,7 +88,7 @@ def draw_stupa(q, scale=1.0, small=False):
 
     cylinder_height = 0.05 * scale
 
-    for i in range(3):
+    for i in range(2):
 
         radius = radius_base - (i * radius_shrink)
 
@@ -105,15 +105,15 @@ def draw_stupa(q, scale=1.0, small=False):
             radius,
             radius,
             cylinder_height,
-            32,
+            18,
             2,
         )
 
-        gluDisk(q, 0, radius, 32, 1)
+        gluDisk(q, 0, radius, 18, 1)
 
         glTranslatef(0, 0, cylinder_height)
 
-        gluDisk(q, 0, radius, 32, 1)
+        gluDisk(q, 0, radius, 18, 1)
 
         glPopMatrix()
 
